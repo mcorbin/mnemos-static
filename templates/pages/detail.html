@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>{{ page.title }} – mcorbin.fr</title>
+<meta name="description" content="{{ page.title }}">
+<link rel="canonical" href="https://mcorbin.fr/pages/{{ page.slug }}">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="mcorbin.fr">
+<meta property="og:title" content="{{ page.title }}">
+<meta property="og:description" content="{{ page.title }}">
+<meta property="og:url" content="https://mcorbin.fr/pages/{{ page.slug }}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<style>
+  .article-body { font-family: 'Lora', Georgia, serif; }
+  .article-body h2, .article-body h3, .article-body h4 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; }
+  .article-body a { color: #b5451b; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .article-body code:not(pre code) { background: #f5f0e8; padding: 0.15em 0.4em; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.875em; }
+  .article-body code:not(pre code)::before, .article-body code:not(pre code)::after { content: none; }
+  .article-body blockquote { border-left-color: #b5451b; color: #78624e; }
+  .article-body pre { border-radius: 8px; overflow: hidden; padding: 0; }
+  .article-body pre code.hljs { border-radius: 0; font-size: 0.875rem; line-height: 1.7; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <article>
+    <header class="mb-8 pb-8 border-b border-ink-border">
+      <h1 class="font-display text-4xl sm:text-5xl font-bold leading-tight tracking-tight text-ink">{{ page.title }}</h1>
+    </header>
+
+    <div class="article-body prose prose-lg max-w-none">
+      {{ content_html | safe }}
+    </div>
+  </article>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+{% endblock %}

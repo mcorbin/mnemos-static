@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>{{ post.title }} – mcorbin.fr</title>
+<meta name="description" content="{{ post.title }}">
+<meta name="author" content="{{ post.author }}">
+<link rel="canonical" href="https://mcorbin.fr/posts/{{ post.slug }}">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="mcorbin.fr">
+<meta property="og:title" content="{{ post.title }}">
+<meta property="og:description" content="{{ post.title }}">
+<meta property="og:url" content="https://mcorbin.fr/posts/{{ post.slug }}">
+{% if post.published_at %}
+<meta property="article:published_time" content="{{ post.published_at.isoformat() }}">
+{% endif %}
+{% if post.updated_at %}
+<meta property="article:modified_time" content="{{ post.updated_at.isoformat() }}">
+{% endif %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ post.title | tojson }},
+  "author": {
+    "@type": "Person",
+    "name": {{ post.author | tojson }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "mcorbin.fr",
+    "url": "https://mcorbin.fr"
+  },
+  "url": "https://mcorbin.fr/posts/{{ post.slug }}"{% if post.published_at %},
+  "datePublished": "{{ post.published_at.isoformat() }}"{% endif %}{% if post.updated_at %},
+  "dateModified": "{{ post.updated_at.isoformat() }}"{% endif %}
+}
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<style>
+  .article-body { font-family: 'Lora', Georgia, serif; }
+  .article-body h2, .article-body h3, .article-body h4 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; }
+  .article-body a { color: #b5451b; text-decoration: none; }
+  .article-body a:hover { text-decoration: underline; }
+  .article-body code:not(pre code) { background: #f5f0e8; padding: 0.15em 0.4em; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.875em; }
+  .article-body code:not(pre code)::before, .article-body code:not(pre code)::after { content: none; }
+  .article-body blockquote { border-left-color: #b5451b; color: #78624e; }
+  .article-body pre { border-radius: 8px; overflow: hidden; padding: 0; }
+  .article-body pre code.hljs { border-radius: 0; font-size: 0.875rem; line-height: 1.7; }
+  .article-body li { margin-top: 0.2em; margin-bottom: 0.2em; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <article>
+    <div class="mb-6">
+      <a href="/" class="inline-flex items-center gap-2 font-body text-sm text-ink-muted hover:text-terra transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Retour aux articles
+      </a>
+    </div>
+    <header class="mb-8">
+      {% if post.tags %}
+      <div class="flex flex-wrap gap-1.5 mb-4">
+        {% for tag in post.tags %}
+        <a href="/?tag={{ tag }}"
+           class="font-mono text-xs bg-terra-light text-terra border border-terra-border px-2.5 py-0.5 rounded-full hover:bg-terra hover:text-white transition-colors duration-150">{{ tag }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <h1 class="font-display text-4xl sm:text-5xl font-bold leading-tight tracking-tight text-ink mb-5">{{ post.title }}</h1>
+
+      <div class="flex items-center gap-3 font-body italic text-sm text-ink-muted">
+        <time datetime="{{ post.published_at.isoformat() if post.published_at else '' }}">{{ post.published_at | datefmt }}</time>
+        <span aria-hidden="true">·</span>
+        <span>{{ post.author }}</span>
+      </div>
+    </header>
+
+    <hr class="border-ink-border my-8">
+
+    <div class="article-body prose prose-lg max-w-none">
+      {{ content_html | safe }}
+    </div>
+
+    <footer class="mt-14 pt-6 border-t border-ink-border">
+      <a href="/" class="inline-flex items-center gap-2 font-body text-sm text-ink-muted hover:text-terra transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Retour aux articles
+      </a>
+    </footer>
+  </article>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+{% endblock %}

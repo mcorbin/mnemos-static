@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96x96.png">
+  <link rel="shortcut icon" href="/img/favicon.ico">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream:          '#fdfaf5',
+            ink:            '#1a1209',
+            'ink-muted':    '#78624e',
+            'ink-border':   '#e8e0d5',
+            terra:          '#b5451b',
+            'terra-dark':   '#923812',
+            'terra-light':  '#fef3ec',
+            'terra-border': '#f5c9b0',
+          },
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            body:    ['Lora', 'Georgia', 'serif'],
+            mono:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-image: radial-gradient(circle, #c8b49a26 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+    .nav-link[data-active] {
+      color: #1a1209;
+      font-weight: 600;
+      border-bottom: 2px solid #b5451b;
+    }
+    #chatbot-panel {
+      position: absolute;
+      bottom: calc(100% + 0.75rem);
+      right: 0;
+      display: none;
+      flex-direction: column;
+      transform-origin: bottom right;
+    }
+    #chatbot-panel.open {
+      display: flex;
+      animation: chatbot-in 0.18s ease both;
+    }
+    @keyframes chatbot-in {
+      from { opacity: 0; transform: scale(0.95) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    #chatbot-messages::-webkit-scrollbar { width: 4px; }
+    #chatbot-messages::-webkit-scrollbar-track { background: transparent; }
+    #chatbot-messages::-webkit-scrollbar-thumb { background: #e8e0d5; border-radius: 2px; }
+    @keyframes typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+    .typing-dot {
+      width: 5px;
+      height: 5px;
+      background: #78624e;
+      border-radius: 50%;
+      display: inline-block;
+      animation: typing-bounce 1.2s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  </style>
+
+  {% block head %}
+  <title>mcorbin.fr</title>
+  <meta name="description" content="Articles techniques sur l'infrastructure, le cloud et la programmation.">
+  {% endblock %}
+
+  <meta name="robots" content="index, follow">
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var path = window.location.pathname;
+      document.querySelectorAll('.nav-link').forEach(function(a) {
+        var href = a.getAttribute('href');
+        var match = href === path || (href === '/' && path === '/');
+        if (match) {
+          a.setAttribute('data-active', '');
+        }
+      });
+    });
+  </script>
+</head>
+<body class="bg-cream text-ink min-h-screen flex flex-col font-body antialiased">
+
+  <header class="sticky top-0 z-40 bg-cream border-b border-ink-border">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+
+      <a href="/" class="font-display text-lg font-semibold tracking-tight text-ink hover:text-terra transition-colors">
+        mcorbin<span class="italic">.fr</span>
+      </a>
+
+      <nav class="hidden sm:flex items-center gap-1 text-sm" aria-label="Navigation principale">
+        <a href="/" class="nav-link px-3 py-1.5 rounded-md text-ink-muted hover:text-ink transition-colors">Articles</a>
+        <a href="/pages/about" class="nav-link px-3 py-1.5 rounded-md text-ink-muted hover:text-ink transition-colors">À propos</a>
+        <a href="/pages/projects" class="nav-link px-3 py-1.5 rounded-md text-ink-muted hover:text-ink transition-colors">Projets</a>
+        <a href="/archives" class="nav-link px-3 py-1.5 rounded-md text-ink-muted hover:text-ink transition-colors">Archives</a>
+      </nav>
+
+      <button id="nav-toggle"
+              class="sm:hidden p-2 rounded-md text-ink-muted hover:text-ink transition-colors"
+              aria-expanded="false"
+              aria-controls="mobile-menu"
+              aria-label="Ouvrir le menu">
+        <svg id="icon-open" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg id="icon-close" class="w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="sm:hidden hidden border-t border-ink-border bg-cream">
+      <nav class="max-w-screen-xl mx-auto px-4 py-3 flex flex-col gap-1 text-sm" aria-label="Navigation mobile">
+        <a href="/" class="nav-link px-3 py-2.5 rounded-md text-ink-muted hover:text-ink transition-colors">Articles</a>
+        <a href="/pages/about" class="nav-link px-3 py-2.5 rounded-md text-ink-muted hover:text-ink transition-colors">À propos</a>
+        <a href="/pages/projects" class="nav-link px-3 py-2.5 rounded-md text-ink-muted hover:text-ink transition-colors">Projets</a>
+        <a href="/archives" class="nav-link px-3 py-2.5 rounded-md text-ink-muted hover:text-ink transition-colors">Archives</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full py-12 px-4 sm:px-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-ink-border mt-auto">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 py-6 text-sm font-mono text-ink-muted text-center">
+      © {{ current_year }} mcorbin.fr
+    </div>
+  </footer>
+
+  <div class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+    <div id="chatbot-panel" class="w-[420px] max-w-[calc(100vw-2rem)] bg-cream rounded-2xl shadow-2xl border border-ink-border overflow-hidden max-h-[75vh]">
+      <div class="bg-cream border-b border-ink-border px-4 py-3 flex items-center justify-between shrink-0">
+        <div class="flex flex-col">
+          <span class="text-sm font-semibold text-ink font-display">Assistant IA</span>
+          <span class="text-xs text-ink-muted font-mono leading-tight">Réponses générées par IA</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="chatbot-new" class="flex items-center gap-1.5 text-xs text-ink-muted hover:text-ink transition-colors font-mono" title="Nouvelle conversation">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Nouveau
+          </button>
+          <button id="chatbot-close" class="text-ink-muted hover:text-ink transition-colors" aria-label="Fermer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div id="chatbot-messages" class="overflow-y-auto p-4 space-y-3 text-sm" style="min-height:320px"></div>
+      <form id="chatbot-form" class="border-t border-ink-border p-3 flex gap-2 shrink-0">
+        <input id="chatbot-input" type="text" placeholder="Posez une question…"
+               class="flex-1 text-sm border border-ink-border rounded-lg px-3 py-2 bg-cream focus:outline-none focus:ring-2 focus:ring-terra focus:border-terra"
+               autocomplete="off">
+        <button type="submit"
+                class="bg-terra hover:bg-terra-dark text-white rounded-lg px-3 py-2 transition-colors flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-6 6m6-6l6 6"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+    <button id="chatbot-toggle"
+            class="text-white flex items-center gap-1.5 px-4 h-11 rounded-full shadow-lg transition-colors font-mono text-sm font-medium"
+            style="background-color: #b5451b">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5z"/>
+      </svg>
+      Explorez avec l'IA
+    </button>
+  </div>
+
+  <script>
+    (function() {
+      var btn = document.getElementById('nav-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('icon-open');
+      var iconClose = document.getElementById('icon-close');
+      if (!btn) return;
+      btn.addEventListener('click', function() {
+        var isOpen = !menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', isOpen);
+        iconOpen.classList.toggle('hidden', !isOpen);
+        iconClose.classList.toggle('hidden', isOpen);
+        btn.setAttribute('aria-expanded', String(!isOpen));
+      });
+    })();
+  </script>
+
+  <script src="/js/chatbot.js?v=2"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

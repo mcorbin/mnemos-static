@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>Articles – mcorbin.fr</title>
+<meta name="description" content="Articles techniques sur l'infrastructure, le cloud et la programmation.">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto bg-white rounded-xl shadow-sm px-6 sm:px-10 py-10">
+
+  <header class="mb-10 pb-8 border-b border-ink-border">
+    <h1 class="font-display text-4xl font-bold tracking-tight text-ink">Articles</h1>
+    <p class="mt-2 font-body italic text-ink-muted">Infrastructure, cloud, programmation.</p>
+  </header>
+
+  {% if tag %}
+  <div class="mb-6 flex items-center gap-2.5 text-sm">
+    <span class="text-ink-muted">Filtré par :</span>
+    <span class="font-mono text-xs bg-terra-light text-terra border border-terra-border px-2.5 py-1 rounded-full font-medium">{{ tag }}</span>
+    <a href="/" class="font-mono text-xs text-ink-muted hover:text-terra transition-colors" aria-label="Effacer le filtre">✕ Effacer</a>
+  </div>
+  {% endif %}
+
+  <div id="post-list">
+    {% include "posts/_items.html" %}
+  </div>
+
+</div>
+{% endblock %}

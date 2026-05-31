@@ -1,0 +1,40 @@
+{% for post in posts %}
+<article class="group py-6 border-b border-ink-border last:border-0">
+  <div class="sm:grid sm:grid-cols-[8rem_1fr] sm:gap-8 flex flex-col gap-1.5">
+    <time class="font-mono text-xs text-ink-muted pt-1.5 tabular-nums shrink-0"
+          datetime="{{ post.published_at.isoformat() if post.published_at else '' }}">
+      {{ post.published_at | datefmt }}
+    </time>
+    <div>
+      <h2 class="font-display text-xl font-semibold leading-snug">
+        <a href="/posts/{{ post.slug }}"
+           class="text-ink group-hover:text-terra transition-colors duration-150">{{ post.title }}</a>
+      </h2>
+      {% if post.description %}
+      <p class="mt-1.5 font-body text-sm text-ink-muted leading-snug">{{ post.description }}</p>
+      {% endif %}
+      {% if post.tags %}
+      <div class="mt-2.5 flex flex-wrap gap-1.5">
+        {% for tag in post.tags %}
+        <a href="/?tag={{ tag }}"
+           class="font-mono text-xs bg-terra-light text-terra border border-terra-border px-2.5 py-0.5 rounded-full hover:bg-terra hover:text-white transition-colors duration-150">{{ tag }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</article>
+{% else %}
+<p class="py-16 text-center font-body italic text-ink-muted">Aucun article trouvé.</p>
+{% endfor %}
+
+{% if next_cursor %}
+<div id="load-more"
+     class="py-10 text-center"
+     hx-get="/?cursor={{ next_cursor }}{% if tag %}&tag={{ tag }}{% endif %}"
+     hx-trigger="revealed"
+     hx-swap="outerHTML"
+     hx-target="#load-more">
+  <span class="font-mono text-xs text-ink-muted animate-pulse">Chargement…</span>
+</div>
+{% endif %}
