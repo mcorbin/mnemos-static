@@ -42,4 +42,64 @@
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script>hljs.highlightAll();</script>
+{% if page.slug == 'about' %}
+<style>
+  #resume-toggle { display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; padding:4px 6px; border-radius:6px; margin:2rem 0 0; width:100%; background:none; border:none; text-align:left; }
+  #resume-toggle:hover { background:#f5f0e8; }
+  #resume-chevron { width:18px; height:18px; flex-shrink:0; color:#78624e; transition:transform 0.22s ease; }
+  #resume-toggle[aria-expanded="true"] #resume-chevron { transform:rotate(90deg); }
+  #resume-toggle-label { font-family:'Fraunces',Georgia,serif; font-size:1.75rem; font-weight:700; color:#1a1209; line-height:1.2; }
+  #resume-content { overflow:hidden; max-height:0; transition:max-height 0.35s ease; }
+  #resume-content.open { max-height:none; background:#f5f0e8; border-radius:10px; padding:1.5rem 2rem; margin-top:0.5rem; }
+  #resume-content h4 { margin-top:1.25rem; margin-bottom:0.1rem; }
+  #resume-content h4 + p { margin-top:0.15rem; }
+</style>
+<script>
+(function () {
+  var heading = Array.from(document.querySelectorAll('.article-body h2')).find(function (h) { return h.textContent.trim() === 'Resume'; });
+  if (!heading) return;
+
+  var content = document.createElement('div');
+  content.id = 'resume-content';
+  var node = heading.nextSibling;
+  while (node) {
+    var next = node.nextSibling;
+    if (node.nodeType === 1 && node.tagName === 'H2') break;
+    content.appendChild(node);
+    node = next;
+  }
+
+  var toggle = document.createElement('button');
+  toggle.id = 'resume-toggle';
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.innerHTML =
+    '<svg id="resume-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/></svg>' +
+    '<span id="resume-toggle-label">Resume</span>' +
+    '<a href="https://mcorbin.fr/static/resume.pdf" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="margin-left:0.75rem;font-family:\'JetBrains Mono\',monospace;font-size:0.75rem;font-weight:500;color:#b5451b;text-decoration:none;border:1px solid #f5c9b0;background:#fef3ec;padding:2px 8px;border-radius:4px;white-space:nowrap;" onmouseover="this.style.background=\'#f5c9b0\'" onmouseout="this.style.background=\'#fef3ec\'">PDF</a>';
+  toggle.style.cssText += 'margin-top:1.5rem;';
+
+  heading.parentNode.replaceChild(toggle, heading);
+  toggle.parentNode.insertBefore(content, toggle.nextSibling);
+
+  toggle.addEventListener('click', function () {
+    var open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    if (!open) {
+      content.style.maxHeight = content.scrollHeight + 'px';
+      content.classList.add('open');
+      content.addEventListener('transitionend', function onEnd() {
+        content.style.maxHeight = 'none';
+        content.removeEventListener('transitionend', onEnd);
+      });
+    } else {
+      content.style.maxHeight = content.scrollHeight + 'px';
+      requestAnimationFrame(function () {
+        content.style.maxHeight = '0';
+        content.classList.remove('open');
+      });
+    }
+  });
+})();
+</script>
+{% endif %}
 {% endblock %}
