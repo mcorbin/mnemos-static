@@ -78,6 +78,32 @@
     }
     .typing-dot:nth-child(2) { animation-delay: 0.2s; }
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @media (max-width: 639px) {
+      #chatbot-wrapper {
+        bottom: 4.5rem;
+      }
+      #chatbot-panel.open {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        background-color: #fdfaf5 !important;
+        animation: chatbot-mobile-in 0.25s ease both !important;
+      }
+      #chatbot-messages {
+        flex: 1 !important;
+        min-height: 0 !important;
+      }
+      #chatbot-panel.open ~ #chatbot-toggle {
+        display: none !important;
+      }
+    }
+    @keyframes chatbot-mobile-in {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
   </style>
 
   {% block head %}
@@ -168,7 +194,7 @@
     </div>
   </footer>
 
-  <div class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+  <div id="chatbot-wrapper" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
     <div id="chatbot-panel" class="w-[420px] max-w-[calc(100vw-2rem)] bg-cream rounded-2xl shadow-2xl border border-ink-border overflow-hidden max-h-[75vh]" data-max-messages="{{ max_messages_per_conversation }}">
       <div class="bg-cream border-b border-ink-border px-4 py-3 flex items-center justify-between shrink-0">
         <div class="flex flex-col">
@@ -209,7 +235,8 @@
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5z"/>
       </svg>
-      Explorez avec l'IA
+      <span class="sm:hidden">IA</span>
+      <span class="hidden sm:inline">Explorez avec l'IA</span>
     </button>
   </div>
 

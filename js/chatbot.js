@@ -40,11 +40,15 @@
   toggle.addEventListener('click', function () {
     var willOpen = !panel.classList.contains('open');
     panel.classList.toggle('open', willOpen);
-    if (willOpen) input.focus();
+    if (window.innerWidth < 640) {
+      document.body.style.overflow = willOpen ? 'hidden' : '';
+    }
+    if (willOpen && window.innerWidth >= 640) input.focus();
   });
 
   close.addEventListener('click', function () {
     panel.classList.remove('open');
+    document.body.style.overflow = '';
   });
 
   newBtn.addEventListener('click', function () {
