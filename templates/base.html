@@ -85,6 +85,7 @@
   <meta name="description" content="Articles techniques sur l'infrastructure, le cloud et la programmation.">
   {% endblock %}
 
+  <link rel="alternate" type="application/rss+xml" title="mcorbin.fr — RSS" href="/api/public/v1/rss?locale=fr">
   <meta name="robots" content="index, follow">
   <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
   <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
@@ -116,6 +117,14 @@
         <a href="/" class="nav-link px-3 py-1.5 rounded-md text-ink-muted hover:text-ink transition-colors">Articles</a>
         <a href="/pages/about" class="nav-link px-3 py-1.5 rounded-md text-ink-muted hover:text-ink transition-colors">À propos</a>
         <a href="/archives" class="nav-link px-3 py-1.5 rounded-md text-ink-muted hover:text-ink transition-colors">Archives</a>
+        <a href="/api/public/v1/rss?locale=fr" type="application/rss+xml" class="flex items-center gap-1 px-3 py-1.5 rounded-md text-ink-muted hover:text-terra transition-colors" aria-label="Flux RSS" title="S'abonner au flux RSS">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="2" y="16" width="5" height="5" rx="1"/>
+            <path d="M2 11.5A8.5 8.5 0 0 1 10.5 20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M2 6A13 13 0 0 1 18 20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <span class="text-sm">RSS</span>
+        </a>
       </nav>
 
       <button id="nav-toggle"
@@ -137,6 +146,14 @@
         <a href="/" class="nav-link px-3 py-2.5 rounded-md text-ink-muted hover:text-ink transition-colors">Articles</a>
         <a href="/pages/about" class="nav-link px-3 py-2.5 rounded-md text-ink-muted hover:text-ink transition-colors">À propos</a>
         <a href="/archives" class="nav-link px-3 py-2.5 rounded-md text-ink-muted hover:text-ink transition-colors">Archives</a>
+        <a href="/api/public/v1/rss?locale=fr" type="application/rss+xml" class="flex items-center gap-1.5 px-3 py-2.5 rounded-md text-ink-muted hover:text-terra transition-colors" aria-label="Flux RSS">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="2" y="16" width="5" height="5" rx="1"/>
+            <path d="M2 11.5A8.5 8.5 0 0 1 10.5 20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M2 6A13 13 0 0 1 18 20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          RSS
+        </a>
       </nav>
     </div>
   </header>
