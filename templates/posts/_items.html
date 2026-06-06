@@ -11,7 +11,7 @@
            class="text-ink group-hover:text-terra transition-colors duration-150">{{ post.title }}</a>
       </h2>
       {% if post.description %}
-      <p class="mt-1.5 font-body text-sm text-ink-muted leading-snug">{{ post.description }}</p>
+      <div class="description-body mt-1.5 font-body text-sm text-ink-muted leading-snug">{{ post.description | markdown | safe }}</div>
       {% endif %}
       {% if post.tags %}
       <div class="mt-2.5 flex flex-wrap gap-1.5">

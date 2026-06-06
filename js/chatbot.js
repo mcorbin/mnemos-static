@@ -4,7 +4,7 @@
     invalid_input_message: 'Message invalide.',
     conversation_not_found: 'La conversation est introuvable.',
     rate_limited: 'Trop de requêtes. Veuillez patienter avant de réessayer.',
-    conversation_message_limit_exceeded: 'Le nombre maximum de messages de cette conversation a été atteint.',
+    conversation_message_limit_exceeded: 'Le nombre maximum de messages de cette conversation a été atteint. Cliquez sur "Nouveau" pour démarrer une nouvelle conversation.',
     agent_daily_token_limit_exceeded: "La limite d'utilisation quotidienne de l'assistant a été atteinte. Réessayez demain.",
     agent_owner_daily_token_limit_exceeded: "La limite d'utilisation quotidienne de l'assistant a été atteinte. Réessayez demain.",
     api_error: 'Une erreur interne s\'est produite. Veuillez réessayer.',
@@ -21,8 +21,21 @@
   const form = document.getElementById('chatbot-form');
   const input = document.getElementById('chatbot-input');
   const messages = document.getElementById('chatbot-messages');
+  const counter = document.getElementById('chatbot-counter');
+  const maxMessages = parseInt(panel.dataset.maxMessages || '0', 10);
 
   let conversationId = null;
+  let userMessageCount = 0;
+
+  function updateCounter() {
+    if (maxMessages > 0 && userMessageCount >= maxMessages - 3) {
+      counter.textContent = userMessageCount + '/' + maxMessages;
+      counter.classList.remove('hidden');
+      counter.style.color = userMessageCount >= maxMessages ? '#b5451b' : '';
+    } else {
+      counter.classList.add('hidden');
+    }
+  }
 
   toggle.addEventListener('click', function () {
     var willOpen = !panel.classList.contains('open');
@@ -38,6 +51,8 @@
     conversationId = null;
     messages.innerHTML = '';
     input.disabled = false;
+    userMessageCount = 0;
+    updateCounter();
     input.focus();
   });
 
@@ -50,6 +65,8 @@
     input.disabled = true;
 
     appendBubble('user', text);
+    userMessageCount++;
+    updateCounter();
 
     try {
       await ensureConversation();
