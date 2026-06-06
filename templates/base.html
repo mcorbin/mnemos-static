@@ -194,7 +194,7 @@
       <form id="chatbot-form" class="border-t border-ink-border p-3 flex gap-2 shrink-0">
         <input id="chatbot-input" type="text" placeholder="Posez une question…"
                class="flex-1 text-sm border border-ink-border rounded-lg px-3 py-2 bg-cream focus:outline-none focus:ring-2 focus:ring-terra focus:border-terra"
-               autocomplete="off">
+               autocomplete="off" maxlength="{{ max_input_message_text_length }}">
         <button type="submit"
                 class="bg-terra hover:bg-terra-dark text-white rounded-lg px-3 py-2 transition-colors flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
